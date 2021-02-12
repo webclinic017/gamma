@@ -25,5 +25,6 @@ class OptionParts(Enum):
 
 
 stock = Ticker(symbol)
-
-print(goog.option_chain())
+chains = stock.option_chain()
+calls = chains.calls
+puts = 

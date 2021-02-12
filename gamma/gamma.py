@@ -27,4 +27,4 @@ class OptionParts(Enum):
 stock = Ticker(symbol)
 chains = stock.option_chain()
 calls = chains.calls
-puts = 
+puts =

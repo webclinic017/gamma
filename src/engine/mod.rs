@@ -4,6 +4,21 @@ use crate::strategy::Strategy;
 use crate::datasource::DataSource;
 use crate::broker::Broker;
 
+
+struct Order {
+    symbol: String,
+    quantity: i64
+}
+
+impl Order {
+    fn new(symbol: String, quantity: i64) -> Order {
+        return Order {
+            symbol: symbol,
+            quantity: quantity
+        };
+    }
+}
+
 pub struct Engine<'a, T1, T2, T3> {
     pub strategy: &'a mut T1,
     pub datasource: &'a mut T2,
@@ -29,6 +44,8 @@ impl<'a, T1: Strategy, T2: DataSource, T3: Broker> Engine<'a, T1, T2, T3> {
             };
         }
 
+        let mut order_queue: Vec<Order> = Vec::new();
+
         // determine target quantities
         for (symbol, desired_percent) in allocations.iter() {
             let desired_quantity = match self.datasource.current_price((*symbol).to_string()) {
@@ -44,17 +61,35 @@ impl<'a, T1: Strategy, T2: DataSource, T3: Broker> Engine<'a, T1, T2, T3> {
             // determine order delta, if exists
             match positions.get(*symbol) {
                 Some(current_quantity) => {
-                    let order_quantity = desired_quantity - *current_quantity;
-                    if order_quantity == 0 {continue;}
-                    self.broker.order_stock((*symbol).to_string(), order_quantity);
+                    let delta = desired_quantity - *current_quantity;
+
+                    if delta != 0 {
+                        if desired_quantity.abs() > (*current_quantity).abs() {
+                            // will result in a net loss to cash, so de-prioritize
+                            // put in back of order queue
+                            order_queue.push(Order::new((*symbol).to_string(), delta))
+                        } else {
+                            // else will result in a gain in cash, so make this top priority
+                            order_queue.insert(0, Order::new((*symbol).to_string(), delta));
+                        }
+                    }
                 },
                 None => {
-                    if desired_quantity == 0 {continue;}
-                    self.broker.order_stock((*symbol).to_string(), desired_quantity);
+                    let delta = desired_quantity as i64;
+                    if delta != 0 {
+                        // going from no position to a long or short position will cause a loss in cash, so de-prioritize
+                        order_queue.push(Order::new((*symbol).to_string(), delta))
+                    }
                 }
-            }
+            };
+
 
         }
+
+        // execute the orders
+        for order in order_queue.iter() {
+            self.broker.order_stock((order.symbol).to_string(), order.quantity);
+        } 
     }
 
     pub fn run(&mut self) {

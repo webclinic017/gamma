@@ -24,16 +24,19 @@ impl DataSource for Csv {
         return Ok(true);
     }
 
-    fn disconnect(&mut self) {
-        
+    fn current_price(&mut self, symbol: String) -> Option<f64> {
+        if self.idx < self.data.len() {
+            return Some(self.data[self.idx]);
+        }
+
+        return None;
     }
 
-    fn drip(&mut self) -> Option<f64> {
-        if self.idx < self.data.len() {
-            self.idx += 1;
-            return Some(self.data[self.idx-1])
-        } else {
-            return None;
-        }
+    fn end(&self) -> bool {
+        return self.idx >= self.data.len();
+    }
+
+    fn step(&mut self) {
+        self.idx += 1;
     }
 }

@@ -4,6 +4,7 @@ pub mod csv;
 
 pub trait DataSource {
     fn connect(&mut self) -> Result<bool, Box<dyn Error>>;
-    fn disconnect(&mut self);
-    fn drip(&mut self) -> Option<f64>; // None on end of stream
+    fn current_price(&mut self, symbol: String) -> Option<f64>;
+    fn end(&self) -> bool;
+    fn step(&mut self);
 }

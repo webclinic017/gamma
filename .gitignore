@@ -3,6 +3,8 @@
 # Added by cargo
 
 /target
+.idea
 .DS_Store
 .vscode
 data
+*.svg

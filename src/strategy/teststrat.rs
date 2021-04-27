@@ -1,16 +1,31 @@
 use std::collections::HashMap;
 
 use super::Strategy;
+use crate::datasource::DataSource;
 pub struct TestStrat {
     
 }
 
 impl Strategy for TestStrat {
-    fn process(&mut self, data: f64) -> HashMap<&'static str, f64> {
+    fn process<T: DataSource>(&mut self, data: &mut T) -> HashMap<&'static str, f64> {
         let mut allocations = HashMap::new();
-        allocations.insert("GOOG", 1.0);
 
-        println!("strategy | data: {}", data);
+
+        match data.current_price("GOOG".to_owned()) {
+            Some(p) => {
+                if p > 280.0 {
+                    allocations.insert("GOOG", 1.0);
+                    println!("allocation: 100%");
+                } else {
+                    allocations.insert("GOOG", 0.0);
+                    println!("allocation: 0%");
+
+                }
+            },
+            None => return allocations
+        }
+
+        
         return allocations
     }
 }

@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use super::Strategy;
 use crate::datasource::DataSource;
 pub struct TestStrat {
-    
+    //datasource: RefCell<DataSource>
 }
 
 impl Strategy for TestStrat {

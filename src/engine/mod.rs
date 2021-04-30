@@ -1,4 +1,4 @@
-use std::{borrow::Borrow, collections::HashMap};
+use std::{borrow::Borrow, cell::RefCell, collections::HashMap};
 
 use crate::strategy::Strategy;
 use crate::datasource::DataSource;
@@ -88,7 +88,7 @@ impl<'a, T1: Strategy, T2: DataSource, T3: Broker> Engine<'a, T1, T2, T3> {
 
         // execute the orders
         for order in order_queue.iter() {
-            self.broker.order_stock((order.symbol).to_string(), order.quantity);
+            self.broker.order_stock((order.symbol).to_string(), order.quantity, self.datasource);
         } 
     }
 
@@ -103,7 +103,7 @@ impl<'a, T1: Strategy, T2: DataSource, T3: Broker> Engine<'a, T1, T2, T3> {
             return false;
         }
 
-        let mut allocations = self.strategy.process(self.datasource);
+        let allocations = self.strategy.process(self.datasource);
         self.handle_orders(allocations);
         self.datasource.step();
 

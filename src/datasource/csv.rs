@@ -24,7 +24,7 @@ impl DataSource for Csv {
         return Ok(true);
     }
 
-    fn current_price(&mut self, symbol: String) -> Option<f64> {
+    fn current_price(&self, symbol: String) -> Option<f64> {
         if self.idx < self.data.len() {
             return Some(self.data[self.idx]);
         }

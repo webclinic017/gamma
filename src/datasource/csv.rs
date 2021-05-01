@@ -32,6 +32,14 @@ impl DataSource for Csv {
         return None;
     }
 
+    fn history(&self, symbol: String, lookback: usize) -> Option<&[f64]> {
+        if self.idx < self.data.len() && self.idx - lookback + 1 > 0 {
+            return Some(&self.data[self.idx-lookback+1..self.idx])
+        }
+
+        return None;
+    }
+
     fn end(&self) -> bool {
         return self.idx >= self.data.len();
     }

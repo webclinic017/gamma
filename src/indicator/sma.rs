@@ -1,7 +1,8 @@
 use super::Indicator;
-struct Sma {
-    length: u8,
-    data: Vec<f64>, 
+
+pub struct Sma {
+    pub length: u8,
+    pub data: Vec<f64>, 
 }
 
 impl Indicator for Sma {

@@ -1,9 +1,10 @@
-use std::{borrow::Borrow, cell::RefCell, collections::HashMap};
+use std::collections::HashMap;
+
+use textplots::{Chart, Plot, Shape};
 
 use crate::strategy::Strategy;
 use crate::datasource::DataSource;
 use crate::broker::Broker;
-
 
 struct Order {
     symbol: String,
@@ -93,9 +94,30 @@ impl<'a, T1: Strategy, T2: DataSource, T3: Broker> Engine<'a, T1, T2, T3> {
     }
 
     pub fn run(&mut self) {
+        let mut equity_line:Vec<(f32, f32)> = Vec::new();
+        let mut curr_step = 0 as f32;
+        equity_line.push((curr_step, self.broker.portfolio_value(self.datasource) as f32));
         while self.step() {
             println!("Running");
+            curr_step += 1 as f32;
+            if !self.datasource.end() {
+                equity_line.push((curr_step, self.broker.portfolio_value(self.datasource) as f32));
+                println!("value: {}", self.broker.portfolio_value(self.datasource));
+            }
+            Chart::new(320, 32, 0., (equity_line.len() + 1) as f32)
+            .lineplot(&Shape::Lines(
+                equity_line.as_slice()
+            ))
+            .nice();
         }
+
+        Chart::new(320, 32, 0., (equity_line.len() + 1) as f32)
+        .lineplot(&Shape::Lines(
+            equity_line.as_slice()
+        ))
+        .nice();
+
+
     }
 
     pub fn step(&mut self) -> bool {

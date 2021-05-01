@@ -34,6 +34,18 @@ impl Broker for Backtest {
         return self.cash;
     }
 
+    fn portfolio_value<T: DataSource>(&self, datasource: &T) -> f64 {
+        let mut total_portfolio_value = self.cash_available();
+        for (symbol, position) in self.positions.iter() {
+            match datasource.current_price((*symbol.to_owned()).to_string()) {
+                Some(price) => total_portfolio_value += price * position.abs() as f64,
+                None => {eprintln!("Error getting price")}
+            }
+        }
+
+            return total_portfolio_value;
+    }
+
     fn positions(&self) -> HashMap<String, i64> {
         return self.positions.clone();
     }

@@ -1,5 +1,4 @@
 pub mod broker;
-use std::cell::RefCell;
 
 use broker::backtest;
 
@@ -12,11 +11,23 @@ use datasource::csv;
 
 pub mod engine;
 
+pub mod indicator;
+use indicator::sma;
+
 fn main() {
     let mut c = csv::Csv {filepath: "/Users/david/Desktop/dev/gamma/data/SPY.csv", field: "", data: Vec::new(), idx: 0};
     c.connect();
 
-    let mut t = teststrat::TestStrat {};
+    let mut t = teststrat::TestStrat {
+        slow_sma: sma::Sma {
+            length: 20,
+            data: Vec::new()
+        },
+        fast_sma: sma::Sma {
+            length: 10,
+            data: Vec::new()
+        }
+    };
     let mut b = backtest::Backtest::new(1000.0);
 
     let mut engine = engine::Engine {

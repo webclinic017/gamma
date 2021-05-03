@@ -12,18 +12,18 @@ use datasource::csv;
 pub mod engine;
 
 pub mod indicator;
-use indicator::sma;
+use indicator::Sma;
 
 fn main() {
     let mut c = csv::Csv {filepath: "/Users/david/Desktop/dev/gamma/data/SPY.csv", field: "", data: Vec::new(), idx: 0};
     c.connect();
 
     let mut t = teststrat::TestStrat {
-        slow_sma: sma::Sma {
+        slow_sma: Sma {
             length: 20,
             data: Vec::new()
         },
-        fast_sma: sma::Sma {
+        fast_sma: Sma {
             length: 10,
             data: Vec::new()
         }

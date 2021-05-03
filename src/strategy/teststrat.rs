@@ -2,12 +2,12 @@ use std::collections::HashMap;
 
 use super::Strategy;
 use crate::{datasource::DataSource, indicator::Indicator};
-use crate::indicator::sma;
+use crate::indicator::Sma;
 
 pub struct TestStrat {
     //datasource: RefCell<DataSource>
-    pub fast_sma: sma::Sma,
-    pub slow_sma: sma::Sma
+    pub fast_sma: Sma,
+    pub slow_sma: Sma
 }
 
 impl Strategy for TestStrat {

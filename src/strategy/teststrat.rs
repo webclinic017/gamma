@@ -6,8 +6,7 @@ use crate::indicator::Sma;
 
 pub struct TestStrat {
     //datasource: RefCell<DataSource>
-    pub fast_sma: Sma,
-    pub slow_sma: Sma
+    pub previous: f64
 }
 
 impl Strategy for TestStrat {
@@ -18,21 +17,17 @@ impl Strategy for TestStrat {
 
         match data.current_price("GOOG".to_owned()) {
             Some(p) => {
-                self.fast_sma.load(p);
-                self.slow_sma.load(p);
 
-                if self.slow_sma.ready() && self.slow_sma.ready() {
-                    if self.fast_sma.current() > self.slow_sma.current() {
-                        allocations.insert("GOOG", 1.0);
-                    } else {
-                        allocations.insert("GOOG", 0.0);
-                    }
+                if p > self.previous {
+                    allocations.insert("GOOG", 1.0);
+                } else {
+                    allocations.insert("GOOG", 0.0);
                 }
+
+                self.previous = p;
+                return allocations;
             },
             None => return allocations
         }
-
-        
-        return allocations
     }
 }

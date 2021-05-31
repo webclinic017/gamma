@@ -2,6 +2,6 @@
   ________   __  _____  ______ 
  / ___/ _ | /  |/  /  |/  / _ |
 / (_ / __ |/ /|_/ / /|_/ / __ |
-\___/_/ |_/_/  /_/_/  /_/_/ |_|  (Γ) Trading System Execution Engine
+\___/_/ |_/_/  /_/_/  /_/_/ |_|  (Γ) Trading Strategy Discovery Engine
 
 ```

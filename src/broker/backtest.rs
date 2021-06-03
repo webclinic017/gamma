@@ -1,6 +1,8 @@
 use std::{borrow::Borrow, cell::RefCell, error::Error};
 use std::collections::HashMap;
 
+use log;
+
 
 use crate::datasource::DataSource;
 
@@ -39,7 +41,7 @@ impl Broker for Backtest {
         for (symbol, position) in self.positions.iter() {
             match datasource.current_price((*symbol.to_owned()).to_string()) {
                 Some(price) => total_portfolio_value += price * position.abs() as f64,
-                None => {eprintln!("Error getting price")}
+                None => { log::error!("Error getting price") }
             }
         }
 

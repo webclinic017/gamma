@@ -1,4 +1,4 @@
-use std::{error::Error, ffi::OsString, fs::File};
+use std::{error::Error, ffi::OsString, fs::File, cmp};
 
 use csv;
 
@@ -8,7 +8,8 @@ pub struct Csv {
     pub filepath: &'static str,
     pub field: &'static str,
     pub data: Vec<f64>,
-    pub idx: usize
+    pub idx: usize,
+    pub end: bool
 }
 
 impl DataSource for Csv {
@@ -41,10 +42,17 @@ impl DataSource for Csv {
     }
 
     fn end(&self) -> bool {
-        return self.idx >= self.data.len();
+        return self.end;
     }
 
     fn step(&mut self) {
-        self.idx += 1;
+        self.idx = cmp::min(
+            self.idx + 1,
+            self.data.len()-1
+        );
+
+        if self.idx == self.data.len()-1 {
+            self.end = true;
+        }
     }
 }

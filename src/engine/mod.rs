@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use log;
+
 use crate::strategy::Strategy;
 use crate::datasource::DataSource;
 use crate::broker::Broker;
@@ -38,7 +40,7 @@ impl<'a, T1: Strategy, T2: DataSource, T3: Broker> Engine<'a, T1, T2, T3> {
                     portfolio_value += price * (*quantity) as f64;
                 },
                 None => {
-                    eprintln!("Unable to get price for {}", symbol)
+                    log::error!("Unable to get price for {}", symbol)
                 }
             };
         }
@@ -52,7 +54,7 @@ impl<'a, T1: Strategy, T2: DataSource, T3: Broker> Engine<'a, T1, T2, T3> {
                     ((portfolio_value * desired_percent) / price) as i64
                 },
                 None => {
-                    eprintln!("Unable to get price for {}", symbol);
+                    log::error!("Unable to get price for {}", symbol);
                     0 as i64
                 }
             };
@@ -92,15 +94,10 @@ impl<'a, T1: Strategy, T2: DataSource, T3: Broker> Engine<'a, T1, T2, T3> {
     }
 
     pub fn run(&mut self) {
-        let mut equity_line:Vec<(f32, f32)> = Vec::new();
-        let mut curr_step = 0 as f32;
-        equity_line.push((curr_step, self.broker.portfolio_value(self.datasource) as f32));
         while self.step() {
-            println!("Running");
-            curr_step += 1 as f32;
+            log::debug!("Running");
             if !self.datasource.end() {
-                equity_line.push((curr_step, self.broker.portfolio_value(self.datasource) as f32));
-                println!("value: {}", self.broker.portfolio_value(self.datasource));
+                log::info!("value: {}", self.broker.portfolio_value(self.datasource));
             }
         }
     }

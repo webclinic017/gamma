@@ -3,7 +3,6 @@ use std::{collections::HashMap, error::Error};
 use crate::datasource::DataSource;
 
 pub mod backtest;
-pub mod etrade;
 
 pub trait Broker {
     fn connect(&mut self) -> Result<(), Box<dyn Error>>;

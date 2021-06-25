@@ -1,8 +1,4 @@
-
-
-# Added by cargo
-
-/target
+venv
 .idea
 .DS_Store
 .vscode

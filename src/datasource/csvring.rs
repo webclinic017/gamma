@@ -1,19 +1,20 @@
 use std::{error::Error, ffi::OsString, fs::File, cmp};
 
-use csv;
+use polars_core::prelude::*;
+use polars_io::prelude::*;
 
 use super::DataSource;
 #[derive(Default)]
-pub struct Csv {
-    pub filepath: &'static str,
+pub struct CsvRing {
+    pub data_dir_path: &'static str,
     pub field: &'static str,
     pub data: Vec<f64>,
     pub idx: usize,
     pub end: bool
 }
 
-impl DataSource for Csv {
-    fn connect(&mut self) -> Result<bool, Box<dyn Error>> {
+impl CsvRing {
+    fn add_series() {
         let file = File::open(OsString::from(self.filepath))?;
 
         let mut reader = csv::Reader::from_reader(file);
@@ -21,7 +22,11 @@ impl DataSource for Csv {
             let row = record?;
             self.data.push(row[5].parse::<f64>()?);
         }
+    }
+}
 
+impl DataSource for CsvRing {
+    fn connect(&mut self) -> Result<bool, Box<dyn Error>> {
         return Ok(true);
     }
 

@@ -1,4 +1,4 @@
-use std::{borrow::Borrow, cell::RefCell, error::Error};
+use std::error::Error;
 use std::collections::HashMap;
 
 use log;
@@ -110,7 +110,7 @@ impl Broker for Backtest {
 mod tests {
     use std::collections::HashMap;
 
-    use crate::{broker::{Broker, backtest::Backtest}, datasource::csv::Csv};
+    use crate::{broker::{Broker, backtest::Backtest}, datasource::csvring::CsvRing};
 
     #[test]
     fn test_new() {
@@ -121,7 +121,7 @@ mod tests {
     #[test]
     #[should_panic]
     fn test_new_negative_cash() {
-        let mut backtest = Backtest::new(-1000.0);
+        let backtest = Backtest::new(-1000.0);
         assert_eq!(backtest.cash_available(), 0.0);
     }
 
@@ -141,7 +141,7 @@ mod tests {
 
     #[test]
     fn test_cash_available() {
-        let mut backtest = Backtest::new(1000.0);
+        let backtest = Backtest::new(1000.0);
         assert_eq!(backtest.cash_available(), 1000.0);
     }
 
@@ -313,6 +313,23 @@ mod tests {
         assert_eq!(backtest.positions(), effective_positions);
     }
 
-    
+    #[test]
+    fn test_order_buy_into_long_position() {
+        let mut datasource = Csv::default();
+        datasource.data.push(20.0);
 
+        let mut backtest = Backtest::new(1000.0);
+        backtest.positions.insert("GOOG".to_owned(), -1);
+
+        let mut effective_positions = HashMap::new();
+        effective_positions.insert("GOOG".to_owned(), 1);
+
+        assert_eq!(backtest.order_stock("GOOG".to_owned(), 2, &datasource), true);
+
+        // cash is unaffected
+        assert_eq!(backtest.cash_available(), 1000.0);
+        
+        // positions have mirroed long/short
+        assert_eq!(backtest.positions(), effective_positions);
+    }
 }

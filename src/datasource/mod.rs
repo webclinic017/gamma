@@ -1,6 +1,6 @@
 use std::error::Error;
 
-pub mod csv;
+pub mod csvring;
 
 pub trait DataSource {
     fn connect(&mut self) -> Result<bool, Box<dyn Error>>;

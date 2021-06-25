@@ -1,8 +1,7 @@
 use std::collections::HashMap;
 
 use super::Strategy;
-use crate::{datasource::DataSource, indicator::Indicator};
-use crate::indicator::Sma;
+use crate::datasource::DataSource;
 
 pub struct TestStrat {
     //datasource: RefCell<DataSource>

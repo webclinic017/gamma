@@ -1,7 +1,3 @@
-use std::{cmp::max, io, process, thread, time::Duration};
-
-use plotters::prelude::*;
-
 use simplelog::*;
 
 pub mod broker;
@@ -13,12 +9,11 @@ use strategy::teststrat;
 
 pub mod datasource;
 use datasource::DataSource;
-use datasource::csv;
+use datasource::csvring;
 
 pub mod engine;
 
 pub mod indicator;
-use indicator::Sma;
 
 fn main() {
     CombinedLogger::init(
@@ -27,8 +22,8 @@ fn main() {
         ]
     ).unwrap();
 
-    let mut c = csv::Csv {filepath: "/Users/david/Desktop/dev/gamma/data/SPY.csv", field: "", data: Vec::new(), idx: 0, end: false};
-    c.connect();
+    let mut c = csv::Csv {data_dir_path: "/Users/david/Desktop/dev/gamma/data/SPY.csv", field: "", data: Vec::new(), idx: 0, end: false};
+    c.connect().unwrap();
 
     let mut t = teststrat::TestStrat {
         previous: 0 as f64
